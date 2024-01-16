@@ -19,7 +19,7 @@ Updates script property of a class from the getter and setter methods.
 
 The conserned methods should be in the following format:
 
-### getter
+### getter syntax
 
 ```PowerShell
 [<type>] get_<property name>() {
@@ -27,7 +27,7 @@ The conserned methods should be in the following format:
 }
 ```
 
-### setter
+### setter syntax
 
 ```PowerShell
 set_<property name>(<value>) {
