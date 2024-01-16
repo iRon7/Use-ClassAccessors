@@ -1,5 +1,5 @@
 <#PSScriptInfo
-.VERSION 3.4.1
+.VERSION 0.0.1
 .GUID 19631007-aef4-42ec-9be2-1cc2854222cc
 .AUTHOR Ronald Bode (iRon)
 .DESCRIPTION Implements class getter and setter accessors.
