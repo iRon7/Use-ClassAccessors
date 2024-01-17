@@ -160,11 +160,17 @@ process {
             if ($Accessor.Name -like 'get_*') {
                 if ($Accessor.Parameters.Count -eq 0) {
                     $MemberName = $Accessor.Name.SubString(4)
-                    $Expression = $Accessor.Body.EndBlock.Extent.Text
+                    $ReturnType = $Accessor.ReturnType.TypeName.Name -as [Type]
+                    if ($Null -eq $ReturnType -or $ReturnType.FullName -eq 'System.Object') {
+                        $Expression = $Accessor.Body.EndBlock.Extent.Text
+                    }
+                    else {
+                        $Expression = ",[$ReturnType](& { $($Accessor.Body.EndBlock.Extent.Text) })"
+                    }
                     if (-not $PropertyAccessors.Contains($MemberName)) { $PropertyAccessors[$MemberName] = @{} }
                     $PropertyAccessors[$MemberName].Value = [ScriptBlock]::Create($Expression)
                 }
-                else { Write-Warning "The method '$($Accessor.Name)' is skipped as it is not parameterless." }
+                else { Write-Warning "The method '$($Accessor.Name)' is skipped as it is not parameter-less." }
             }
             if ($Accessor.Name -like 'set_*') {
                 if ($Accessor.Parameters.Count -eq 1) {
@@ -185,7 +191,7 @@ process {
                 $TypeData.Force      = $Force
                 Update-TypeData @TypeData
             }
-            else { Write-Warning "A 'get_$MemberName()' method is required for 'set_$MemberName()' method." }
+            else { Write-Warning "A 'set_$MemberName()' accessor requires a 'get_$MemberName()' accessor." }
         }
     }
 }

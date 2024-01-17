@@ -8,7 +8,7 @@ Class ExampleClass {
     hidden set_Value($Value) {
       $this._Value = $Value
     }
-    hidden [Type]get_Type() {
+    hidden [String]get_Type() {
       if ($Null -eq $this.Value) { return $Null }
       else { return $this._Value.GetType() }
     }
@@ -39,7 +39,7 @@ Describe 'Use-ClassAccessors' {
         }
 
         It 'Get type' {
-            $Example.Type | Should -BeOfType Type
+            $Example.Type | Should -BeOfType String
             $Example.Type | Should -Be Int
         }
         
