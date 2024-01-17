@@ -1,5 +1,5 @@
 <#PSScriptInfo
-.VERSION 0.0.2
+.VERSION 0.0.3
 .GUID 19631007-aef4-42ec-9be2-1cc2854222cc
 .AUTHOR Ronald Bode (iRon)
 .COMPANYNAME
@@ -178,14 +178,14 @@ process {
         }
         foreach ($MemberName in $PropertyAccessors.get_Keys()) {
             $TypeData = $PropertyAccessors[$MemberName]
-            # if ($TypeData.Contains('Value')) {
+            if ($TypeData.Contains('Value')) {
                 $TypeData.TypeName   = $Class.Name
                 $TypeData.MemberType = 'ScriptProperty'
                 $TypeData.MemberName = $MemberName
                 $TypeData.Force      = $Force
                 Update-TypeData @TypeData
-            # }
-            # else { Write-Warning "A 'get_$MemberName()' method is required for 'set_$MemberName()' method." }
+            }
+            else { Write-Warning "A 'get_$MemberName()' method is required for 'set_$MemberName()' method." }
         }
     }
 }
