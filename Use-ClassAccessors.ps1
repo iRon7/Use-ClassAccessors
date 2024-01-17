@@ -1,8 +1,7 @@
 <#PSScriptInfo
-.VERSION 0.0.1
+.VERSION 0.0.2
 .GUID 19631007-aef4-42ec-9be2-1cc2854222cc
 .AUTHOR Ronald Bode (iRon)
-.DESCRIPTION Implements class getter and setter accessors.
 .COMPANYNAME
 .COPYRIGHT
 .TAGS Accessors Getter Setter Class get_ set_ TypeData
@@ -21,27 +20,35 @@
         Implements class getter and setter accessors.
 
     .DESCRIPTION
-        Updates script property of a class from the getter and setter methods.
+        The [Use-ClassAccessors][1] cmdlet updates script property of a class from the getter and setter methods.
+        Which are also known as [accessors or mutator methods][2].
 
-        The conserned methods should be in the following format:
+        The getter and setter methods should use the following syntax:
 
-        ### getter
+        ### getter syntax
 
             [<type>] get_<property name>() {
-              return <value>
+              return <variable>
             }
 
-        ### setter
+        ### setter syntax
 
-            set_<property name>(<value>) {
+            set_<property name>(<variable>) {
               <code>
             }
 
-    .EXAMPLE
-        # Class with accessors
+        > [!NOTE]
+        > A **setter** accessor requires a **getter** accessor to implement the related property.
 
-        The following example define getter and setter for a `value` property
-        And a _readonly_ property for the type of the type of the contained value.
+        > [!NOTE]
+        > In most cases, you might want to hide the getter and setter methods using the [`hidden` keyword][3]
+        > on the getter and setter methods.
+
+    .EXAMPLE
+        # Using class accessors
+
+        The following example defines a getter and setter for a `value` property
+        and a _readonly_ property for the type of the type of the contained value.
 
             Class ExampleClass {
                 hidden $_Value
@@ -57,11 +64,11 @@
                 }
             }
 
-            .\Use-ClassAccessors.ps1 -Force
+            .\Use-ClassAccessors.ps1 # -Force
 
             $Example = [ExampleClass]::new()
 
-            $Example.Value = 42
+            $Example.Value = 42         # Set value to 42
             $Example.Value              # Returns 42
             $Example.Type               # Returns [Int] type info
             $Example.Type = 'Something' # Throws readonly error
@@ -80,6 +87,11 @@
 
         Specifies the script (block or path) that contains the class source.
         Default: the script where this command is invoked
+
+    .LINK
+        [1]: https://github.com/iRon7/Use-ClassAccessors "Online Help"
+        [2]: https://en.wikipedia.org/wiki/Mutator_method "Mutator method"
+        [3]: https://learn.microsoft.com/powershell/module/microsoft.powershell.core/about/about_classes#hidden-keyword "Hidden keyword in classes"
 #>
     
 using namespace System.Management.Automation
@@ -161,11 +173,14 @@ process {
         }
         foreach ($MemberName in $PropertyAccessors.get_Keys()) {
             $TypeData = $PropertyAccessors[$MemberName]
-            $TypeData.TypeName   = $Class.Name
-            $TypeData.MemberType = 'ScriptProperty'
-            $TypeData.MemberName = $MemberName
-            $TypeData.Force      = $Force
-            Update-TypeData @TypeData
+            # if ($TypeData.Contains('Value')) {
+                $TypeData.TypeName   = $Class.Name
+                $TypeData.MemberType = 'ScriptProperty'
+                $TypeData.MemberName = $MemberName
+                $TypeData.Force      = $Force
+                Update-TypeData @TypeData
+            # }
+            # else { Write-Warning "A 'get_$MemberName()' method is required for 'set_$MemberName()' method." }
         }
     }
 }

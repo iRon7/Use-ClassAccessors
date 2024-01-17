@@ -5,7 +5,8 @@ Implements class getter and setter accessors.
 
 ## Syntax
 
-```JavaScript
+```PowerShell
+Use-ClassAccessors
     [-ClassName <String[]>]
     [-PropertyName <String>]
     [-Script <Object>]
@@ -15,32 +16,40 @@ Implements class getter and setter accessors.
 
 ## Description
 
-Updates script property of a class from the getter and setter methods.
+The [Use-ClassAccessors][1] cmdlet updates script property of a class from the getter and setter methods.
+Which are also known as [accessors or mutator methods][2].
 
-The conserned methods should be in the following format:
+The getter and setter methods should use the following syntax:
 
 ### getter syntax
 
 ```PowerShell
 [<type>] get_<property name>() {
-  return <value>
+  return <variable>
 }
 ```
 
 ### setter syntax
 
 ```PowerShell
-set_<property name>(<value>) {
+set_<property name>(<variable>) {
   <code>
 }
 ```
 
+> [!NOTE]
+> A **setter** accessor requires a **getter** accessor to implement the related property.
+
+> [!NOTE]
+> In most cases, you might want to hide the getter and setter methods using the [`hidden` keyword][3]
+> on the getter and setter methods.
+
 ## Examples
 
-### Example 1: Class with accessors
+### Example 1: Using class accessors
 
-The following example define getter and setter for a `value` property
-And a _readonly_ property for the type of the type of the contained value.
+The following example defines a getter and setter for a `value` property
+and a _readonly_ property for the type of the type of the contained value.
 
 ```PowerShell
 Class ExampleClass {
@@ -57,11 +66,11 @@ Class ExampleClass {
     }
 }
 
-.\Use-ClassAccessors.ps1 -Force
+.\Use-ClassAccessors.ps1 # -Force
 
 $Example = [ExampleClass]::new()
 
-$Example.Value = 42
+$Example.Value = 42         # Set value to 42
 $Example.Value              # Returns 42
 $Example.Type               # Returns [Int] type info
 $Example.Type = 'Something' # Throws readonly error
@@ -122,3 +131,12 @@ Default: the script where this command is invoked
 <tr><td>Accept wildcard characters:</td><td>False</td></tr>
 </table>
 
+## Related Links
+
+* 1: [Online Help][1]
+* 2: [Mutator method][2]
+* 3: [Hidden keyword in classes][3]
+
+[1]: https://github.com/iRon7/Use-ClassAccessors "Online Help"
+[2]: https://en.wikipedia.org/wiki/Mutator_method "Mutator method"
+[3]: https://learn.microsoft.com/powershell/module/microsoft.powershell.core/about/about_classes#hidden-keyword "Hidden keyword in classes"
