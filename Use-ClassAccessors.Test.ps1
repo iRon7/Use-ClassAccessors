@@ -13,6 +13,7 @@ Class ExampleClass {
       else { return $this._Value.GetType() }
     }
 }
+.\Use-ClassAccessors.ps1 -Force
 
 Describe 'Use-ClassAccessors' {
 
@@ -26,7 +27,6 @@ Describe 'Use-ClassAccessors' {
     Context 'Example' {
         
         BeforeAll {
-            .\Use-ClassAccessors.ps1 -Force
             $Example = [ExampleClass]::new()
         }
 
