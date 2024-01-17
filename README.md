@@ -122,6 +122,9 @@ Default: the script where this command is invoked
 
 ### <a id="-force">**`-Force`**</a>
 
+Indicates that the cmdlet reloads the specified accessors,
+even if the accessors already have been defined for the concerned class.
+
 <table>
 <tr><td>Type:</td><td></td></tr>
 <tr><td>Mandatory:</td><td>False</td></tr>

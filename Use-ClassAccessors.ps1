@@ -88,6 +88,11 @@
         Specifies the script (block or path) that contains the class source.
         Default: the script where this command is invoked
 
+    .PARAMETER Force
+
+        Indicates that the cmdlet reloads the specified accessors,
+        even if the accessors already have been defined for the concerned class.
+
     .LINK
         [1]: https://github.com/iRon7/Use-ClassAccessors "Online Help"
         [2]: https://en.wikipedia.org/wiki/Mutator_method "Mutator method"
