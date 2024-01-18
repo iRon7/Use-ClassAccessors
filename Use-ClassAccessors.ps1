@@ -31,6 +31,11 @@
               return <variable>
             }
 
+        or (which performs a little faster):
+
+            [Object] get_<property name>() {
+              return ,[<Type>]<variable>
+            }
         ### setter syntax
 
             set_<property name>(<variable>) {

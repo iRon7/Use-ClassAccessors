@@ -29,6 +29,14 @@ The getter and setter methods should use the following syntax:
 }
 ```
 
+or (which performs a little faster):
+
+```PowerShell
+[Object] get_<property name>() {
+  return ,[<Type>]<variable>
+}
+```
+
 ### setter syntax
 
 ```PowerShell
