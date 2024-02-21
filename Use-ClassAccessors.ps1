@@ -1,5 +1,5 @@
 <#PSScriptInfo
-.VERSION 0.0.3
+.VERSION 0.0.4
 .GUID 19631007-aef4-42ec-9be2-1cc2854222cc
 .AUTHOR Ronald Bode (iRon)
 .COMPANYNAME
@@ -170,7 +170,7 @@ process {
                         $Expression = $Accessor.Body.EndBlock.Extent.Text
                     }
                     else {
-                        $Expression = ",[$ReturnType](& { $($Accessor.Body.EndBlock.Extent.Text) })"
+                        $Expression = "[$ReturnType](& { $($Accessor.Body.EndBlock.Extent.Text) })"
                     }
                     if (-not $PropertyAccessors.Contains($MemberName)) { $PropertyAccessors[$MemberName] = @{} }
                     $PropertyAccessors[$MemberName].Value = [ScriptBlock]::Create($Expression)
