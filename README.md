@@ -7,9 +7,8 @@ Implements class getter and setter accessors.
 
 ```PowerShell
 Use-ClassAccessors
-    [-ClassName <String[]>]
-    [-PropertyName <String>]
-    [-Script <Object>]
+    [-Class <String[]>]
+    [-Property <String>]
     [-Force]
     [<CommonParameters>]
 ```
@@ -60,6 +59,8 @@ The following example defines a getter and setter for a `value` property
 and a _readonly_ property for the type of the type of the contained value.
 
 ```PowerShell
+Install-Script -Name Use-ClassAccessors
+
 Class ExampleClass {
     hidden $_Value
     hidden [Object] get_Value() {
@@ -72,9 +73,8 @@ Class ExampleClass {
       if ($Null -eq $this.Value) { return $Null }
       else { return $this._Value.GetType() }
     }
+    hidden static ExampleClass() { Use-ClassAccessors }
 }
-
-.\Use-ClassAccessors.ps1 # -Force
 
 $Example = [ExampleClass]::new()
 
@@ -86,24 +86,10 @@ $Example.Type = 'Something' # Throws readonly error
 
 ## Parameter
 
-### <a id="-classname">**`-ClassName <String[]>`**</a>
+### <a id="-class">**`-Class <String[]>`**</a>
 
-Specifies the name of the class that contain the accessors.
-Default: All class in the (current) script (see also: [Script](#script) parameter)
-
-<table>
-<tr><td>Type:</td><td></td></tr>
-<tr><td>Mandatory:</td><td>False</td></tr>
-<tr><td>Position:</td><td>Named</td></tr>
-<tr><td>Default value:</td><td></td></tr>
-<tr><td>Accept pipeline input:</td><td></td></tr>
-<tr><td>Accept wildcard characters:</td><td>False</td></tr>
-</table>
-
-### <a id="-propertyname">**`-PropertyName <String>`**</a>
-
-Specifies the property name to update with the accessors.
-Default: All properties in the given class or classes (see also: [ClassName](#classname) parameter)
+Specifies the class from which the accessor need to be initialized.
+Default: The class from which this function is invoked (by its static initializer).
 
 <table>
 <tr><td>Type:</td><td></td></tr>
@@ -114,10 +100,10 @@ Default: All properties in the given class or classes (see also: [ClassName](#cl
 <tr><td>Accept wildcard characters:</td><td>False</td></tr>
 </table>
 
-### <a id="-script">**`-Script <Object>`**</a>
+### <a id="-property">**`-Property <String>`**</a>
 
-Specifies the script (block or path) that contains the class source.
-Default: the script where this command is invoked
+Filters the property that requires to be (re)initialized.
+Default: All properties in the given class
 
 <table>
 <tr><td>Type:</td><td></td></tr>

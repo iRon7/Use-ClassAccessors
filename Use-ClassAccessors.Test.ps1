@@ -1,21 +1,27 @@
-#Requires -Modules @{ModuleName="Pester"; ModuleVersion="5.0.0"}
-
-Class ExampleClass {
-    hidden $_Value
-    hidden [Object] get_Value() {
-      return $this._Value
-    }
-    hidden set_Value($Value) {
-      $this._Value = $Value
-    }
-    hidden [String]get_Type() {
-      if ($Null -eq $this.Value) { return $Null }
-      else { return $this._Value.GetType() }
-    }
-}
-.\Use-ClassAccessors.ps1 -Force
+#Requires -Modules @{ModuleName="Pester"; ModuleVersion="5.5.0"}
 
 Describe 'Use-ClassAccessors' {
+
+    BeforeAll {
+
+        Set-StrictMode -Version Latest
+        
+        Class ExampleClass {
+            hidden $_Value
+            hidden [Object] get_Value() {
+              return $this._Value
+            }
+            hidden set_Value($Value) {
+              $this._Value = $Value
+            }
+            hidden [Type]get_Type() {
+              if ($Null -eq $this.Value) { return $Null }
+              else { return $this._Value.GetType() }
+            }
+            hidden static ExampleClass() { .\Use-ClassAccessors.ps1 }
+        }
+        $Example = [ExampleClass]::new()
+    }
 
     Context 'Sanity Check' {
 
@@ -24,27 +30,112 @@ Describe 'Use-ClassAccessors' {
         }
     }
 
-    Context 'Example' {
+    Context 'AccessString' {
         
         BeforeAll {
-            $Example = [ExampleClass]::new()
-        }
-
-        It 'Set value' {
-            { $Example.Value = 42 } | Should -not -Throw
-        }
-
-        It 'Get value' {
-            $Example.Value | Should -Be 42
-        }
-
-        It 'Get type' {
-            $Example.Type | Should -BeOfType String
-            $Example.Type | Should -Be Int
+            Class AccessString {
+                [String] get_Empty()  { return @() }
+                [String] get_String() { return 'String' }
+                [String] get_Array()  { return 'One', 'Two' }
+                hidden static AccessString() { .\Use-ClassAccessors.ps1 }
+            }
+            $AccessString = [AccessString]::new()
         }
         
-        It 'Set value' {
-            { $Example.Type = 'Something' } | Should -Throw "'Type' is a ReadOnly property."
+        It 'Empty' {
+           $AccessString.Empty | Should -BeNullOrEmpty # See: https://github.com/PowerShell/PowerShell/issues/21250
+        }
+        
+        It 'String' {
+            $AccessString.String | Should -BeOfType String
+            $AccessString.String | Should -Be String
+        }
+        
+        It 'Array' {
+            $AccessString.Array | Should -BeOfType String
+            $AccessString.Array | Should -Be 'One Two'
+        }
+    }
+        
+    Context 'AccessObject' {
+        
+        BeforeAll {
+            Class AccessObject {
+                [Object] get_Empty()  { return @() }
+                [Object] get_String() { return 'String' }
+                [Object] get_Array()  { return 'One', 'Two' }
+                hidden static AccessObject() { .\Use-ClassAccessors.ps1 }
+            }
+            $AccessObject = [AccessObject]::new()
+        }
+        
+        It 'Empty' {
+            $AccessObject.Empty | Should -BeNullOrEmpty
+        }
+        
+        It 'String' {
+            $AccessObject.String | Should -BeOfType String
+            $AccessObject.String | Should -Be String
+        }
+        
+        It 'Array' {
+            $AccessObject.Array | Should -BeOfType Object
+            $AccessObject.Array | Should -Be 'One', 'Two'
+        }
+    }
+    
+    Context 'AccessStringArray' {
+        
+        BeforeAll {
+            Class AccessStringArray {
+                [String[]] get_Empty()  { return @() }
+                [String[]] get_String() { return 'String' }
+                [String[]] get_Array()  { return 'One', 'Two' }
+                hidden static AccessStringArray() { .\Use-ClassAccessors.ps1 }
+            }
+            $AccessStringArray = [AccessStringArray]::new()
+        }
+        
+        It 'Empty' {
+            $AccessStringArray.Empty | Should -BeNullOrEmpty
+        }
+        
+        It 'String' {
+            $AccessStringArray.String | Should -BeOfType String
+            $AccessStringArray.String | Should -Be String
+        }
+        
+        It 'Array' {
+            $AccessStringArray.Array | Should -BeOfType Object
+            $AccessStringArray.Array | Should -Be 'One', 'Two'
+        }
+    }
+        
+    Context 'AccessArray' {
+        
+        BeforeAll {
+            Class AccessArray {
+                [Array] get_Empty()  { return @() }
+                [Array] get_String() { return 'String' }
+                [Array] get_Array()  { return 'One', 'Two' }
+                hidden static AccessArray() { .\Use-ClassAccessors.ps1 }
+            }
+            $AccessArray = [AccessArray]::new()
+        }
+        
+        It 'Empty' {
+            $AccessArray.Empty | Should -BeNullOrEmpty
+        }
+        
+        It 'String' {
+            $AccessArray.String | Should -BeOfType String
+            $AccessArray.String | Should -Be String
+        }
+        
+        It 'Array' {
+            $AccessArray.Array | Should -BeOfType Object
+            $AccessArray.Array | Should -Be 'One', 'Two'
         }
     }
 }
+
