@@ -28,7 +28,7 @@ The getter and setter methods should use the following syntax:
 }
 ```
 
-or (which performs a little faster):
+or:
 
 ```PowerShell
 [Object] get_<property name>() {
