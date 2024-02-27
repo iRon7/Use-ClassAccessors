@@ -32,9 +32,12 @@ or:
 
 ```PowerShell
 [Object] get_<property name>() {
-  return ,[<Type>]<variable>
+  return [<Type>]<variable>
 }
 ```
+
+> [!NOTE]
+> Any (single) item array will be unrolled if the `[Object]` type is used for the getter method.
 
 ### setter syntax
 
