@@ -36,6 +36,7 @@ Describe 'Use-ClassAccessors' {
             Class AccessString {
                 [String] get_Empty()  { return @() }
                 [String] get_String() { return 'String' }
+                [String] get_Single() { return @('Single') }
                 [String] get_Array()  { return 'One', 'Two' }
                 hidden static AccessString() { .\Use-ClassAccessors.ps1 }
             }
@@ -43,17 +44,22 @@ Describe 'Use-ClassAccessors' {
         }
         
         It 'Empty' {
-           $AccessString.Empty | Should -BeNullOrEmpty # See: https://github.com/PowerShell/PowerShell/issues/21250
+           Should -ActualValue $AccessString.Empty -BeNullOrEmpty # See: https://github.com/PowerShell/PowerShell/issues/21250
         }
         
         It 'String' {
-            $AccessString.String | Should -BeOfType String
-            $AccessString.String | Should -Be String
+            Should -ActualValue $AccessString.String -BeOfType String
+            Should -ActualValue $AccessString.String -Be String
+        }
+        
+        It 'Single' {
+            Should -ActualValue $AccessString.Single -BeOfType String
+            Should -ActualValue $AccessString.Single -Be 'Single'
         }
         
         It 'Array' {
-            $AccessString.Array | Should -BeOfType String
-            $AccessString.Array | Should -Be 'One Two'
+            Should -ActualValue $AccessString.Array -BeOfType String
+            Should -ActualValue $AccessString.Array -Be 'One Two'
         }
     }
         
@@ -63,6 +69,7 @@ Describe 'Use-ClassAccessors' {
             Class AccessObject {
                 [Object] get_Empty()  { return @() }
                 [Object] get_String() { return 'String' }
+                [Object] get_Single() { return @('Single') }
                 [Object] get_Array()  { return 'One', 'Two' }
                 hidden static AccessObject() { .\Use-ClassAccessors.ps1 }
             }
@@ -70,17 +77,23 @@ Describe 'Use-ClassAccessors' {
         }
         
         It 'Empty' {
-            $AccessObject.Empty | Should -BeNullOrEmpty
+            Should -ActualValue $AccessObject.Empty -BeNullOrEmpty
         }
         
         It 'String' {
-            $AccessObject.String | Should -BeOfType String
-            $AccessObject.String | Should -Be String
+            Should -ActualValue $AccessObject.String -BeOfType $AccessObject.get_String().GetType().Name
+            Should -ActualValue $AccessObject.String -Be       $AccessObject.get_String()
+        }
+        
+        It 'Single' {
+            Should -ActualValue $AccessObject.Single -BeOfType String # Expected: $AccessObject.get_Single().GetType().Name [String[]]
+            Should -ActualValue $AccessObject.Single -Be       $AccessObject.get_Single()
         }
         
         It 'Array' {
-            $AccessObject.Array | Should -BeOfType Object
-            $AccessObject.Array | Should -Be 'One', 'Two'
+            Should -ActualValue $AccessObject.Array       -BeOfType $AccessObject.get_Array().GetType().Name
+            Should -ActualValue $AccessObject.Array.Count -Be       $AccessObject.get_Array().Count
+            Should -ActualValue $AccessObject.Array[0]    -Be       $AccessObject.get_Array()[0]
         }
     }
     
@@ -90,6 +103,7 @@ Describe 'Use-ClassAccessors' {
             Class AccessStringArray {
                 [String[]] get_Empty()  { return @() }
                 [String[]] get_String() { return 'String' }
+                [String[]] get_Single() { return @('Single') }
                 [String[]] get_Array()  { return 'One', 'Two' }
                 hidden static AccessStringArray() { .\Use-ClassAccessors.ps1 }
             }
@@ -101,13 +115,20 @@ Describe 'Use-ClassAccessors' {
         }
         
         It 'String' {
-            $AccessStringArray.String | Should -BeOfType String
-            $AccessStringArray.String | Should -Be String
+            $AccessStringArray.String | Should -BeOfType String # Expected: $AccessStringArray.get_String().GetType().Name [String[]]
+            $AccessStringArray.String | Should -Be       $AccessStringArray.get_String()
+        }
+        
+        It 'Single' {
+            $AccessStringArray.Single      | Should -BeOfType String # Expected: $AccessStringArray.get_Single().GetType().Name [String[]]
+            $AccessStringArray.Array.Count | Should -Be       $AccessStringArray.get_Array().Count
+            $AccessStringArray.Single      | Should -Be       $AccessStringArray.get_Single()
         }
         
         It 'Array' {
-            $AccessStringArray.Array | Should -BeOfType Object
-            $AccessStringArray.Array | Should -Be 'One', 'Two'
+            $AccessStringArray.Array       | Should -BeOfType String # Expected: $AccessStringArray.get_Single().GetType().Name [String[]]
+            $AccessStringArray.Array.Count | Should -Be  $AccessStringArray.get_Array().Count
+            $AccessStringArray.Array[0]    | Should -Be  $AccessStringArray.get_Array()[0]
         }
     }
         
@@ -115,9 +136,9 @@ Describe 'Use-ClassAccessors' {
         
         BeforeAll {
             Class AccessArray {
-                [Array] get_Empty()  { return @() }
-                [Array] get_String() { return 'String' }
-                [Array] get_Array()  { return 'One', 'Two' }
+                [Object[]] get_Empty()  { return @() }
+                [Object[]] get_String() { return 'String' }
+                [Object[]] get_Array()  { return 'One', 'Two' }
                 hidden static AccessArray() { .\Use-ClassAccessors.ps1 }
             }
             $AccessArray = [AccessArray]::new()

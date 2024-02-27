@@ -1,5 +1,5 @@
 <#PSScriptInfo
-.Version 0.1.0
+.Version 0.1.1
 .Guid 19631007-aef4-42ec-9be2-1cc2854222cc
 .Author Ronald Bode (iRon)
 .CompanyName
@@ -31,11 +31,15 @@
               return <variable>
             }
 
-        or (which performs a little faster):
+        or:
 
             [Object] get_<property name>() {
-              return ,[<Type>]<variable>
+              return [<Type>]<variable>
             }
+
+        > [!NOTE]
+        > Any (single) item array will be unrolled if the `[Object]` type is used for the getter method.
+
         ### setter syntax
 
             set_<property name>(<variable>) {
@@ -130,7 +134,7 @@ process {
         if (-not $TargetType) { Write-Warning "Class not found: $ClassName" }
         $TypeData = Get-TypeData -TypeName $ClassName
         $Members = if ($TypeData -and $TypeData.Members) { $TypeData.Members.get_Keys() } else { @() }
-        $Methods = 
+        $Methods =
             if ($Property) {
                 $TargetType.GetMethod("get_$Property")
                 $TargetType.GetMethod("set_$Property")
@@ -145,11 +149,22 @@ process {
             $Parameters = $Method.GetParameters()
             if ($Method.Name -Like 'get_*') {
                 if ($Parameters.Count -eq 0) {
-                    $Expression = @"
+                    if ($Method.ReturnType.IsArray) {
+                        $Expression = @"
 `$TargetType = '$ClassName' -as [Type]
 `$Method = `$TargetType.GetMethod('$($Method.Name)')
-[$($Method.ReturnType.FullName)]`$Method.Invoke(`$this, `$Null)
+`$Invoke = `$Method.Invoke(`$this, `$Null)
+`$Output = `$Invoke -as '$($Method.ReturnType.FullName)'
+if (@(`$Invoke).Count -gt 1) { `$Output } else { ,`$Output }
 "@
+                    }
+                    else {
+                        $Expression = @"
+`$TargetType = '$ClassName' -as [Type]
+`$Method = `$TargetType.GetMethod('$($Method.Name)')
+`$Method.Invoke(`$this, `$Null) -as '$($Method.ReturnType.FullName)'
+"@
+                    }
                     if (-not $Accessors.Contains($Member)) { $Accessors[$Member] = @{} }
                     $Accessors[$Member].Value = [ScriptBlock]::Create($Expression)
                 }
