@@ -1,5 +1,5 @@
 <#PSScriptInfo
-.Version 0.1.1
+.Version 0.1.2
 .Guid 19631007-aef4-42ec-9be2-1cc2854222cc
 .Author Ronald Bode (iRon)
 .CompanyName
@@ -140,7 +140,11 @@ process {
                 $TargetType.GetMethod("set_$Property")
             }
             else {
-                $targetType.GetMethods().where{ ($_.Name -Like 'get_*' -or  $_.Name -Like 'set_*') -and $_.Name -NotLike '???__*' }
+                $TargetType.GetMethods().where{
+                    -not $_.IsStatic -and
+                    ($_.Name -Like 'get_*' -or  $_.Name -Like 'set_*') -and
+                    $_.Name -NotLike '???__*'
+                }
             }
         $Accessors = @{}
         foreach ($Method in $Methods) {

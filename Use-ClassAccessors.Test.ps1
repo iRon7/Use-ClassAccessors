@@ -23,10 +23,33 @@ Describe 'Use-ClassAccessors' {
         $Example = [ExampleClass]::new()
     }
 
-    Context 'Sanity Check' {
+    Context 'Load Check' {
 
         It 'Help' {
             .\Use-ClassAccessors.ps1 -? | Out-String -Stream | Should -Contain SYNOPSIS
+        }
+    }
+
+    Context 'Exa,ple' {
+
+        It 'Instance' {
+            $Example.Value | Should -BeNullOrEmpty
+        }
+
+        It 'Setter' {
+            { $Example.Value = 42 } | Should -not -throw
+        }
+
+        It 'Getter' {
+            $Example.Value | Should -be 42
+        }
+
+        It 'ReadOnly Getter' {
+            $Example.Type | Should -be int
+        }
+
+        It 'Prohibit Write' {
+            { $Example.Type = 'Something' } | Should -throw
         }
     }
 
@@ -156,6 +179,56 @@ Describe 'Use-ClassAccessors' {
         It 'Array' {
             $AccessArray.Array | Should -BeOfType Object
             $AccessArray.Array | Should -Be 'One', 'Two'
+        }
+    }
+
+    Context 'Empty list' {
+        
+        BeforeAll {
+            Class TestClass {
+                hidden $_List
+                [Object] get_List() { return $this._List }
+                set_List($List) { $this._List = $List }
+            }
+            $Test = [TestClass]::new()
+            $Test.List = [System.Collections.Generic.List[String]]::new()
+        }
+    }
+    
+    Context 'Issues' {
+        
+        it 'Set empty dictionary' {
+            $Properties = [System.Collections.Specialized.OrderedDictionary]::new([StringComparer]::Ordinal)
+            $Example.Value = $Properties
+            $Example.Value | Should -BeOfType 'System.Collections.Specialized.OrderedDictionary'
+        }
+
+        it '#5 Static methods/properties should be excluded' {
+            Class TestClass {
+                hidden static $Static = 3
+                hidden $_Value
+                hidden TestClass ($Value) {
+                    $this.Value = $Value
+                }
+                static TestClass() {
+                    .\Use-ClassAccessors.ps1
+                }
+                hidden [Object] get_Value() {
+                  return $this._Value
+                }
+                hidden set_Value($Value) {
+                  $this._Value = $Value
+                }
+                hidden [Type]get_Type() {
+                  if ($Null -eq $this.Value) { return $Null }
+                  else { return $this._Value.GetType() }
+                }
+            }
+
+            $Test = [TestClass]::new(1)
+            $Test.PSObject.Properties.Name.Count | Should -be 2
+            $Test.PSObject.Properties.Name | Should -not -contain Static
+
         }
     }
 }
