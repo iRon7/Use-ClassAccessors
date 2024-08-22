@@ -30,7 +30,7 @@ Describe 'Use-ClassAccessors' {
         }
     }
 
-    Context 'Exa,ple' {
+    Context 'Example' {
 
         It 'Instance' {
             $Example.Value | Should -BeNullOrEmpty
@@ -228,7 +228,33 @@ Describe 'Use-ClassAccessors' {
             $Test = [TestClass]::new(1)
             $Test.PSObject.Properties.Name.Count | Should -be 2
             $Test.PSObject.Properties.Name | Should -not -contain Static
+        }
 
+        it '#6 Properties ar not in order' {
+            Class OrderedClass {
+                hidden [String] get_A() { return 'a' }
+                hidden [String] get_B() { return 'b' }
+                hidden [String] get_C() { return 'c' }
+                hidden [String] get_D() { return 'd' }
+                hidden static OrderedClass() { .\Use-ClassAccessors.ps1 }
+            }
+
+            $Ordered = [OrderedClass]::new()
+
+            $Ordered.PSObject.Properties.Name | Should -Be 'A', 'B', 'C', 'D'
+        }
+
+        it '#7 (Hidden) native properties are reset #7' {
+            Class NativeClass {
+                hidden [Int] $Native = 1
+                hidden [Int] get_Accessor() { return 2 }
+                hidden static NativeClass() { .\Use-ClassAccessors.ps1 }
+            }
+
+            $Native = [NativeClass]::new()
+
+            $Native.PSObject.Properties.Name | Should -Contain Accessor
+            $Native.PSObject.Properties.Name | Should -Not -Contain Native
         }
     }
 }

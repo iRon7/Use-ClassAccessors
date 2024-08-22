@@ -1,5 +1,5 @@
 <#PSScriptInfo
-.Version 0.1.2
+.Version 0.1.3
 .Guid 19631007-aef4-42ec-9be2-1cc2854222cc
 .Author Ronald Bode (iRon)
 .CompanyName
@@ -133,20 +133,23 @@ process {
         $TargetType = $ClassName -as [Type]
         if (-not $TargetType) { Write-Warning "Class not found: $ClassName" }
         $TypeData = Get-TypeData -TypeName $ClassName
-        $Members = if ($TypeData -and $TypeData.Members) { $TypeData.Members.get_Keys() } else { @() }
+        $Members = if ($TypeData -and $TypeData.Members) { $TypeData.Members.get_Keys() }
         $Methods =
             if ($Property) {
                 $TargetType.GetMethod("get_$Property")
                 $TargetType.GetMethod("set_$Property")
             }
             else {
+                $NativeProperties = $TargetType.GetProperties()
+                $NativeNames = if ($NativeProperties) { $NativeProperties.Name } 
                 $TargetType.GetMethods().where{
                     -not $_.IsStatic -and
                     ($_.Name -Like 'get_*' -or  $_.Name -Like 'set_*') -and
-                    $_.Name -NotLike '???__*'
+                    $_.Name -NotLike '???__*' -and
+                    $_.Name.SubString(4) -notin $NativeNames
                 }
             }
-        $Accessors = @{}
+        $Accessors = [Ordered]@{}
         foreach ($Method in $Methods) {
             $Member = $Method.Name.SubString(4)
             if (-not $Force -and $Member -in $Members) { continue }
