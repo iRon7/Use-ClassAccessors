@@ -36,7 +36,7 @@ or:
 }
 ```
 
-> [!NOTE]
+> [!NOTE](#note)
 > Any (single) item array will be unrolled if the `[Object]` type is used for the getter method.
 
 ### setter syntax
@@ -47,16 +47,17 @@ set_<property name>(<variable>) {
 }
 ```
 
-> [!NOTE]
+> [!NOTE](#note)
 > A **setter** accessor requires a **getter** accessor to implement the related property.
 
-> [!NOTE]
+> [!NOTE](#note)
 > In most cases, you might want to hide the getter and setter methods using the [`hidden` keyword][3]
 > on the getter and setter methods.
 
 ## Examples
 
-### Example 1: Using class accessors
+### <a id="example-1"><a id="example-using-class-accessors">Example 1: Using class accessors</a></a>
+
 
 The following example defines a getter and setter for a `value` property
 and a _readonly_ property for the type of the type of the contained value.
@@ -87,56 +88,69 @@ $Example.Type               # Returns [Int] type info
 $Example.Type = 'Something' # Throws readonly error
 ```
 
-## Parameter
+## Parameters
 
-### <a id="-class">**`-Class <String[]>`**</a>
+### <a id="-class">`-Class` <a href="https://docs.microsoft.com/en-us/dotnet/api/System.String[]">&lt;String[]&gt;</a></a>
 
 Specifies the class from which the accessor need to be initialized.
 Default: The class from which this function is invoked (by its static initializer).
 
-<table>
-<tr><td>Type:</td><td></td></tr>
-<tr><td>Mandatory:</td><td>False</td></tr>
-<tr><td>Position:</td><td>Named</td></tr>
-<tr><td>Default value:</td><td></td></tr>
-<tr><td>Accept pipeline input:</td><td></td></tr>
-<tr><td>Accept wildcard characters:</td><td>False</td></tr>
-</table>
+```powershell
+Name:                       -Class
+Aliases:                    # None
+Type:                       [String[]]
+Value (default):            # Undefined
+Parameter sets:             # All
+Mandatory:                  False
+Position:                   # Named
+Accept pipeline input:      False
+Accept wildcard characters: False
+```
 
-### <a id="-property">**`-Property <String>`**</a>
+### <a id="-property">`-Property` <a href="https://docs.microsoft.com/en-us/dotnet/api/System.String">&lt;String&gt;</a></a>
 
 Filters the property that requires to be (re)initialized.
 Default: All properties in the given class
 
-<table>
-<tr><td>Type:</td><td></td></tr>
-<tr><td>Mandatory:</td><td>False</td></tr>
-<tr><td>Position:</td><td>Named</td></tr>
-<tr><td>Default value:</td><td></td></tr>
-<tr><td>Accept pipeline input:</td><td></td></tr>
-<tr><td>Accept wildcard characters:</td><td>False</td></tr>
-</table>
+```powershell
+Name:                       -Property
+Aliases:                    # None
+Type:                       [String]
+Value (default):            # Undefined
+Parameter sets:             # All
+Mandatory:                  False
+Position:                   # Named
+Accept pipeline input:      False
+Accept wildcard characters: False
+```
 
-### <a id="-force">**`-Force`**</a>
+### <a id="-force">`-Force`</a>
 
 Indicates that the cmdlet reloads the specified accessors,
 even if the accessors already have been defined for the concerned class.
 
-<table>
-<tr><td>Type:</td><td></td></tr>
-<tr><td>Mandatory:</td><td>False</td></tr>
-<tr><td>Position:</td><td>Named</td></tr>
-<tr><td>Default value:</td><td></td></tr>
-<tr><td>Accept pipeline input:</td><td></td></tr>
-<tr><td>Accept wildcard characters:</td><td>False</td></tr>
-</table>
+```powershell
+Name:                       -Force
+Aliases:                    # None
+Type:                       [SwitchParameter]
+Value (default):            # Undefined
+Parameter sets:             # All
+Mandatory:                  False
+Position:                   # Named
+Accept pipeline input:      False
+Accept wildcard characters: False
+```
 
 ## Related Links
 
-* 1: [Online Help][1]
-* 2: [Mutator method][2]
-* 3: [Hidden keyword in classes][3]
+* [Online Help](https://github.com/iRon7/Use-ClassAccessors)
+* [Mutator method](https://en.wikipedia.org/wiki/Mutator_method)
+* [Hidden keyword in classes](https://learn.microsoft.com/powershell/module/microsoft.powershell.core/about/about_classes#hidden-keyword)
+<!-- -->
+
 
 [1]: https://github.com/iRon7/Use-ClassAccessors "Online Help"
 [2]: https://en.wikipedia.org/wiki/Mutator_method "Mutator method"
 [3]: https://learn.microsoft.com/powershell/module/microsoft.powershell.core/about/about_classes#hidden-keyword "Hidden keyword in classes"
+
+[comment]: <> (Created with Get-MarkdownHelp: Install-Script -Name Get-MarkdownHelp)
