@@ -24,7 +24,7 @@ The getter and setter methods should use the following syntax:
 
 ```PowerShell
 [<type>] get_<property name>() {
-  return <variable>
+    return <variable>
 }
 ```
 
@@ -32,25 +32,25 @@ or:
 
 ```PowerShell
 [Object] get_<property name>() {
-  return [<Type>]<variable>
+    return [<Type>]<variable>
 }
 ```
 
-> [!NOTE](#note)
+> [!NOTE]
 > Any (single) item array will be unrolled if the `[Object]` type is used for the getter method.
 
 ### setter syntax
 
 ```PowerShell
 set_<property name>(<variable>) {
-  <code>
+    <code>
 }
 ```
 
-> [!NOTE](#note)
+> [!NOTE]
 > A **setter** accessor requires a **getter** accessor to implement the related property.
 
-> [!NOTE](#note)
+> [!NOTE]
 > In most cases, you might want to hide the getter and setter methods using the [`hidden` keyword][3]
 > on the getter and setter methods.
 
@@ -68,14 +68,14 @@ Install-Script -Name Use-ClassAccessors
 Class ExampleClass {
     hidden $_Value
     hidden [Object] get_Value() {
-      return $this._Value
+        return $this._Value
     }
     hidden set_Value($Value) {
-      $this._Value = $Value
+        $this._Value = $Value
     }
     hidden [Type]get_Type() {
-      if ($Null -eq $this.Value) { return $Null }
-      else { return $this._Value.GetType() }
+        if ($Null -eq $this.Value) { return $Null }
+        else { return $this._Value.GetType() }
     }
     hidden static ExampleClass() { Use-ClassAccessors }
 }
