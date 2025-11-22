@@ -66,6 +66,7 @@ and a _readonly_ property for the type of the type of the contained value.
 Install-Script -Name Use-ClassAccessors
 
 Class ExampleClass {
+    hidden static ExampleClass() { Use-ClassAccessors }
     hidden $_Value
     hidden [Object] get_Value() {
         return $this._Value
@@ -77,7 +78,6 @@ Class ExampleClass {
         if ($Null -eq $this.Value) { return $Null }
         else { return $this._Value.GetType() }
     }
-    hidden static ExampleClass() { Use-ClassAccessors }
 }
 
 $Example = [ExampleClass]::new()
@@ -154,3 +154,4 @@ Accept wildcard characters: False
 [3]: https://learn.microsoft.com/powershell/module/microsoft.powershell.core/about/about_classes#hidden-keyword "Hidden keyword in classes"
 
 [comment]: <> (Created with Get-MarkdownHelp: Install-Script -Name Get-MarkdownHelp)
+
